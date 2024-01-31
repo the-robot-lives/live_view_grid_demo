@@ -17,7 +17,8 @@ defmodule NoizuGridWeb.Router do
   scope "/", NoizuGridWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", GridLive
+
   end
 
   # Other scopes may use custom stacks.
