@@ -1,47 +1,18 @@
+defmodule Noizu.LiveGrid.CellBody do
+ defstruct [
+  identifier: nil,
+  session: %{},
+  module: nil,
+  live_view?: false
+ ]
+end
+
 defmodule Noizu.LiveGrid.Cell do
   use Phoenix.LiveComponent
 
-
   defstruct [
-    identifier: nil,
-    contents: []
+    body: []
   ]
-
-#
-#  attr :cell, :string, required: true
-#  attr :action, :string, required: true
-#  attr :position, :string, required: true, values: ["top", "bottom", "left", "right"]
-#  def action_bar(assigns) do
-#    ~H"""
-#    <div class={["action-bar", @position, @position in ["top","bottom"] && "horizontal" || "vertical"]}>
-#      <div class="hot-zone">
-#        <div class="bar"/>
-#        <div class="action"  >
-#          <span phx-click="expand:cell" phx-value-cell={@cell} phx-value-at={@position} class="hero-arrows-pointing-out"/>
-#          <span phx-click={@action} phx-value-cell={@cell} phx-value-at={@position} class="hero-plus-circle"/>
-#          <span phx-click="shrink:cell" phx-value-cell={@cell} phx-value-at={@position} class="hero-arrows-pointing-in"/>
-#        </div>
-#        <div class="bar"/>
-#      </div>
-#    </div>
-#    """
-#  end
-#
-#
-#
-#  def grid_element_size(_) do
-#    "w-full h-full"
-#  end
-#
-#            <div
-#  id={"#{@id}-cell"}
-#  class={["live-cell", grid_element_size(@contents)]}
-#  phx-hook="GridCell"
-#  phx-value-menu={"#{@grid}-contextmenu"}
-#  phx-value-grid={@grid}
-#  draggable={@contents[:contents] && "true" || "false"}
-#  phx-value-contents={@contents[:contents][:identifier]}
-#  >
 
   def render(assigns) do
     ~H"""
@@ -49,7 +20,31 @@ defmodule Noizu.LiveGrid.Cell do
      id={"#{@id}-cell"}
      class={["live-cell"]}
     >
-    [CELL]
+
+
+
+
+          <%= case @contents.body do %>
+            <% %{live_view?: true} -> %>
+          <%=
+          live_render(
+              @socket,
+              @contents.body.module,
+              id: "#{@contents.body.identifier}",
+              container: {:div, [class: "w-full h-full"]},
+              session: @contents.body.session,
+              layout: false
+           )
+          %>
+            <% %{live_view?: false} -> %>
+             <.live_component
+                id={"#{@contents.body.identifier}"}
+                module={@contents.body.module}
+                session={@contents.body.session}
+            />
+            <% _ -> %>
+            <div>[PLACEHOLDER]</div>
+          <% end %>
     </div>
     """
   end
