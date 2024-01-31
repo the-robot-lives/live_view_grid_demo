@@ -14,13 +14,19 @@ defmodule NoizuGridWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", NoizuGridWeb do
-    pipe_through :browser
+  live_session :default do
 
-    live "/", GridLive
-    live "/dash/:session", GridLive
+    scope "/", NoizuGridWeb do
+      pipe_through :browser
+
+      live "/", GridLive
+      live "/dash/:session", GridLive
+
+    end
 
   end
+
+
 
   # Other scopes may use custom stacks.
   # scope "/api", NoizuGridWeb do

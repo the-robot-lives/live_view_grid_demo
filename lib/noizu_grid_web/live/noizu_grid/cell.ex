@@ -18,9 +18,8 @@ defmodule Noizu.LiveGrid.Cell do
     ~H"""
     <div
      id={"#{@id}-cell"}
-     class={["live-cell"]}
+     class="live-cell w-full h-full"
     >
-
 
 
 
@@ -43,7 +42,7 @@ defmodule Noizu.LiveGrid.Cell do
                 session={@contents.body.session}
             />
             <% _ -> %>
-            <div>[PLACEHOLDER]</div>
+            <div class="h-full">[PLACEHOLDER]</div>
           <% end %>
     </div>
     """

@@ -3,11 +3,11 @@ defmodule NoizuGridWeb.GridLive do
 
   @empty_grid %Noizu.LiveGrid{}
 
-#  def grid_update(identifier, grid, socket) do
-#    # Save Updated Grid for User/Session
-#    :persistent_term.put({:grid, identifier}, grid)
-#    {:ok, socket}
-#  end
+  #  def grid_update(identifier, grid, socket) do
+  #    # Save Updated Grid for User/Session
+  #    :persistent_term.put({:grid, identifier}, grid)
+  #    {:ok, socket}
+  #  end
 
   def grid(:fetch, socket, grid) when is_struct(grid) do
     grid(:fetch, socket, grid.identifier)
@@ -100,17 +100,17 @@ defmodule NoizuGridWeb.GridLive do
 
   def render(assigns) do
     ~H"""
-    <div class="bg-white py-4 ">
+    <div class="bg-white py-4 h-full ">
     <div class="mx-auto max-w-7xl px-6 lg:px-8">
     <div class="mx-auto max-w-2xl sm:text-center">
       <p class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">User Configurable LiveView Dashboard Demo</p>
       <p class="mt-6 text-lg leading-8 text-gray-600">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores impedit perferendis suscipit eaque, iste dolor cupiditate blanditiis.</p>
     </div>
     </div>
-    <div class="relative overflow-hidden pt-0 border shadow-sm shadow-slate-800">
-    <article class=" p-2 pt-0 min-w-full w-full">
+    <div class="h-full w-full pt-0">
+    <article class="block p-2 pt-0  w-full  h-full   ">
 
-    <header class="mx-4 mb-8 mt-0 border-b border-dashed px-2 pb-2 pt-0 border-gray-400">
+    <div class="mx-4 mb-8 mt-0">
     <!-- Title -->
     <h2 class="
       text-4xl font-extrabold leading-none
@@ -128,15 +128,17 @@ defmodule NoizuGridWeb.GridLive do
     Dashboard: <%= @grid_identifier %>
     </p>
     <p>By <a class="underline hover:uppercase" href="https://noizu.com">Noizu Labs</a> See the <a class="underline text-blue-900 hover:uppercase" href="https://therobotlives.com/">Blog.</a></p>
-    </header>
+    </div>
 
+
+    <div class="min-h-[120vh] h-[120vh] p-4">
     <%=
     live_render(
         @socket,
         Noizu.LiveGrid,
         id: "#{@grid_identifier}-grid",
-        container: {:div, [class: "w-full h-full"]},
         layout: false,
+        container: {:div, [class: "w-full h-full"]},
         session: %{
           "demo" => true,
           "grid" => @grid_identifier,
@@ -144,6 +146,7 @@ defmodule NoizuGridWeb.GridLive do
         }
     )
     %>
+    </div>
 
     </article>
     </div>

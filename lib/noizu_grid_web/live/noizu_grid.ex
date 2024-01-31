@@ -81,10 +81,11 @@ defmodule Noizu.LiveGrid do
 
   def render(assigns) do
     ~H"""
+    <div class="live-grid flex flex-col h-[90vh] w-full ">
     <.debug_details :if={@demo}  grid={@grid} grid_callback={@grid_callback}/>
-    <div class="live-grid w-full h-full">
+
       <div class="underlay"></div>
-      <div class="grid grid-cols-12">
+      <div class="grid grid-cols-4 w-full h-full border">
         <.live_component
           :if={@grid.contents == []}
           id={"#{@id}."}
@@ -98,8 +99,8 @@ defmodule Noizu.LiveGrid do
             contents={child}
         />
       </div>
+      <.context_menu for={@id}/>
     </div>
-    <.context_menu for={@id}/>
     """
   end
 
