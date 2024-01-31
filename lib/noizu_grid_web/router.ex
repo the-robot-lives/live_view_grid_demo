@@ -18,6 +18,7 @@ defmodule NoizuGridWeb.Router do
     pipe_through :browser
 
     live "/", GridLive
+    live "/dash/:session", GridLive
 
   end
 
