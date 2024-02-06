@@ -4,6 +4,71 @@
 
 /* This file is for your main application CSS */
 
-body > .phx-connected {
-    @apply h-full;
+/* Grid Cells */
+.grid-cell.empty {
+    @apply bg-black opacity-5 text-white;
+}
+
+.grid-cell.empty.drop-selection {
+    @apply bg-green-800 opacity-50;
+}
+.grid-cell.empty.drop-selection.drop-obstructed {
+    @apply bg-red-800;
+}
+
+.noizu-grid .noizu-grid-grid {
+    @apply grid gap-1 grid-flow-col;
+    align-content: stretch;
+    justify-content: stretch;
+}
+
+.live-cell {
+    @apply bg-slate-400 m-0 p-0 ring ;
+}
+
+.live-cell:has(> .action-bar:hover) {
+    @apply ring;
+}
+
+.action-bar:hover {
+    @apply z-20;
+}
+.action-bar .hot-zone {
+    @apply opacity-0 invisible transition-opacity duration-1000 ease-in-out ;
+}
+.action-bar:hover .hot-zone {
+    @apply opacity-100 visible transition-opacity duration-1000 ease-in-out ;
+}
+
+.action-bar.horizontal .hot-zone {
+    @apply flex flex-row h-3 mx-3 justify-center items-center;
+}
+.action-bar.horizontal:hover .hot-zone {
+    @apply mx-0;
+}
+.action-bar.horizontal .hot-zone .bar {
+    @apply bg-black h-[1px] w-full;
+}
+.action-bar.vertical .hot-zone {
+    @apply flex flex-col w-3 my-3 justify-center items-center;
+    height: calc(100% - 1.5rem);
+}
+.action-bar.vertical:hover .hot-zone {
+    @apply my-0 h-full;
+}
+.action-bar.vertical .hot-zone .bar {
+    @apply bg-black w-[1px] h-full;
+}
+
+.action-bar.left {
+    @apply absolute -left-2 top-0 h-full w-3;
+}
+.action-bar.right {
+    @apply absolute -right-2 top-0 h-full w-3;
+}
+.action-bar.top {
+    @apply absolute -top-2 left-0  w-full  h-3;
+}
+.action-bar.bottom {
+    @apply absolute -bottom-2 left-0  w-full h-3;
 }

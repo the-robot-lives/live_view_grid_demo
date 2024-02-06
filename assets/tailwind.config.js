@@ -8,6 +8,8 @@ const path = require("path")
 module.exports = {
   content: [
     "./js/**/*.js",
+    "./css/**/*.css",
+    "./css/app.css",
     "../lib/noizu_grid_web.ex",
     "../lib/noizu_grid_web/**/*.*ex"
   ],
@@ -15,7 +17,8 @@ module.exports = {
     extend: {
       colors: {
         brand: "#FD4F00",
-      }
+      },
+
     },
   },
   plugins: [

@@ -1,4 +1,4 @@
-defmodule Noizu.LiveGrid.Row do
+defmodule NoizuGrid.Col do
   use Phoenix.LiveComponent
 
   defstruct [
@@ -16,7 +16,7 @@ defmodule Noizu.LiveGrid.Row do
           :if={@contents.contents == []}
           id={"#{@id}."}
           grid={@grid}
-          module={Noizu.LiveGrid.Cell} contents={%Noizu.LiveGrid.Cell{}} />
+          module={NoizuGrid.Cell} contents={%NoizuGrid.Cell{}} />
         <.live_component
             :for={{child,index} <- Enum.with_index(@contents.contents)}
             id={"#{@id}.#{index}"}

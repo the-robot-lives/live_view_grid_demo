@@ -1,66 +1,29 @@
-defmodule Noizu.LiveGrid do
+defmodule NoizuGrid do
   use Phoenix.LiveView
+  require Record
+  require NoizuGrid.Cell
+
 
   defstruct [
     identifier: nil,
-    contents: []
+    contents: [],
+    rows: 12,
+    cols: 12,
+    cell_map: %{}
   ]
 
-  def debug_details(assigns) do
-    ~H"""
-    <container>
-      <h3 class="mb-2 text-lg text-gray-500 lg:text-xl">Raw Data</h3>
-      <div class="prose min-w-full">
-        <pre class="w-full"><code class="elixir-code"><%=
-          "#{inspect @grid, limit: :infinity, width: 20, pretty: true}"
-        %></code></pre>
-      </div>
-
-      <h3 class="mt-8 mb-2 text-lg text-gray-500 lg:text-xl">Call Backs</h3>
-      <div class="prose min-w-full">
-        <pre class="w-full"><code class="elixir-code"><%=
-          "#{inspect @grid_callback, limit: :infinity, width: 120, pretty: true}"
-        %></code></pre>
-      </div>
-
-
-      <h3 class="mt-8 mb-2 text-lg text-gray-500 lg:text-xl">Tool Bar</h3>
-
-      <div class="grid grid-cols-3 border p-2 mb-16 bg-slate-100 ">
-        <div class="flex justify-center">
-          <button
-            phx-click="grid:new"
-            class="bg-slate-400 rounded py-2 px-4 flex items-center justify-center">
-            <span class="hero-plus-circle flex items-center justify-center"/>
-            New
-          </button>
-        </div>
-        <div class="flex justify-center">
-          <button
-            phx-click="grid:save"
-            class="bg-slate-400 rounded py-2 px-4 flex items-center justify-center">
-            <span class="hero-plus-circle flex items-center justify-center"/>
-            Save
-          </button>
-        </div>
-        <div class="flex justify-center">
-          <button
-            phx-click="grid:undo"
-            class="bg-slate-400 rounded py-2 px-4 mr-2 flex items-center justify-center">
-            <span class="hero-plus-circle flex items-center justify-center"/>
-            Undo
-          </button>
-          <button
-            phx-click="grid:redo"
-            class="bg-slate-400 rounded py-2 px-4 flex items-center justify-center">
-            <span class="hero-plus-circle flex items-center justify-center"/>
-            Redo
-          </button>
-        </div>
-      </div>
-      </container>
-    """
+  def refresh(grid) do
+    cell_map = Enum.reduce(grid.contents, %{},
+      fn(cell,acc) ->
+        Enum.reduce(cell.layout.row..(cell.layout.row + cell.layout.height - 1),acc, fn(y,acc) ->
+          Enum.reduce(cell.layout.col..(cell.layout.col + cell.layout.width - 1),acc, fn(x,acc) ->
+            Map.put(acc, {x,y}, true)
+          end)
+        end)
+      end)
+    %NoizuGrid{grid | cell_map: cell_map}
   end
+
 
   def context_menu(assigns) do
   ~H"""
@@ -79,26 +42,72 @@ defmodule Noizu.LiveGrid do
   """
   end
 
+  @doc """
+  Render hint to insure tailwind grid is populated.
+  """
+  def grid_hint(assigns) do
+  ~H"""
+    <div class="
+      grid-cols-1 grid-rows-1
+      grid-cols-2 grid-rows-2
+      grid-cols-3 grid-rows-3
+      grid-cols-4 grid-rows-4
+      grid-cols-5 grid-rows-5
+      grid-cols-6 grid-rows-6
+      grid-cols-7 grid-rows-7
+      grid-cols-8 grid-rows-8
+      grid-cols-9 grid-rows-9
+      grid-cols-10 grid-rows-10
+      grid-cols-11 grid-rows-11
+      grid-cols-12 grid-rows-12
+      bg-red-200
+    ">
+    <div class="
+      col-start-1 col-start-2 col-start-3 col-start-4 col-start-5 col-start-6 col-start-7 col-start-8 col-start-9 col-start-10 col-start-11 col-start-12
+      row-start-1 row-start-2 row-start-3 row-start-4 row-start-5 row-start-6 row-start-7 row-start-8 row-start-9 row-start-10 row-start-11 row-start-12
+
+      col-span-1 col-span-2 col-span-3 col-span-4 col-span-5 col-span-6 col-span-7 col-span-8 col-span-9 col-span-10 col-span-11 col-span-12
+      row-span-1 row-span-2 row-span-3 row-span-4 row-span-5 row-span-6 row-span-7 row-span-8 row-span-9 row-span-10 row-span-11 row-span-12
+
+    "></div>
+    </div>
+    """
+  end
+
   def render(assigns) do
     ~H"""
-    <div class="live-grid flex flex-col h-[90vh] w-full ">
-    <.debug_details :if={@demo}  grid={@grid} grid_callback={@grid_callback}/>
-
+    <div
+      id={@id <> "-grid"}
+      phx-hook="NoizuGrid"
+      class="noizu-grid"
+    >
       <div class="underlay"></div>
-      <div class="grid grid-cols-4 w-full h-full border">
+      <div
+        class={"noizu-grid-grid grid grid-cols-#{@grid.cols} grid-rows-#{@grid.rows}"}
+      >
+
+      <!-- First Render known elements -->
+      <%= for {cell,idx} <- Enum.with_index(@grid.contents) do %>
         <.live_component
-          :if={@grid.contents == []}
-          id={"#{@id}."}
-          grid={@grid.identifier}
-          module={Noizu.LiveGrid.Cell} contents={%Noizu.LiveGrid.Cell{}} />
-        <.live_component
-            :for={{child,index} <- Enum.with_index(@grid.contents)}
-            id={"#{@id}.#{index}"}
-            grid={@grid.identifier}
-            module={child.__struct__}
-            contents={child}
+          id={"#{@id}-#{idx}"}
+          index={idx}
+          grid={@id}
+          module={cell.__struct__}
+          cell={cell}
         />
+      <% end %>
+
+      <!-- Second loop through grid representation, output entry for any empty cell -->
+      <%= for col  <- 1 .. @grid.cols do %>
+        <%= for row  <- 1 .. @grid.rows  do %>
+          <%= unless @grid.cell_map[{col, row}] do %>
+            <div cell-col={col} cell-row={row} class={"grid-cell empty col-start-#{col} row-start-#{row} col-span-1 row-span-1 "}>&nbsp;(<%= col %>,<%= row %>)</div>
+          <% end %>
+        <% end %>
+      <% end %>
+
       </div>
+
       <.context_menu for={@id}/>
     </div>
     """
@@ -111,14 +120,35 @@ defmodule Noizu.LiveGrid do
     socket = socket
              |> assign(:grid_callback, params["callback"])
              |> assign(:grid, grid)
-             |> assign(:id, params["id"])
+             |> assign(:id, socket.id)
              |> assign(:demo, params["demo"] || false)
     {:ok, socket}
+  end
+
+  def handle_event("cell:add", params = %{"widget" => widget, "position" => %{"col" => col, "row" => row}, "clip" => %{"cols" => width, "rows" => height}}, socket) do
+    widget = String.to_existing_atom(widget)
+    IO.inspect(params, label: "CELL:ADD - #{inspect widget}", pretty: true)
+
+    inject = %NoizuGrid.Cell{
+      layout: %{col: col, row: row, width: width, height: height},
+      component: widget,
+      settings: Jason.decode!(params["settings"])
+    }
+    grid = update_in(socket.assigns.grid, [Access.key(:contents)], & [inject|&1])
+           |> refresh()
+
+    {m,f,a} = socket.assigns.grid_callback
+    {:ok, {socket, grid}} = apply(m,f,[:update, socket, grid])
+    socket = socket
+             |> assign(:grid, grid)
+
+    {:noreply, socket}
   end
 
   def handle_event("grid:save",_,socket) do
     {m,f,a} = socket.assigns.grid_callback
     {:ok, {socket, grid}} = apply(m,f,[:save, socket, socket.assigns.grid])
+    grid = refresh(grid)
     socket = socket
              |> assign(:grid, grid)
     {:noreply, socket}
@@ -127,6 +157,7 @@ defmodule Noizu.LiveGrid do
   def handle_event("grid:new",_,socket) do
     {m,f,a} = socket.assigns.grid_callback
     {:ok, {socket, grid}} = apply(m,f,[:new, socket, socket.assigns.grid])
+    grid = refresh(grid)
     socket = socket
              |> assign(:grid, grid)
     {:noreply, socket}
