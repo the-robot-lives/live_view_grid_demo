@@ -185,7 +185,7 @@ defmodule NoizuGridWeb.GridLive do
     </p>    <p>By <a class="underline hover:uppercase" href="https://noizu.com">Noizu Labs</a> See the <a class="underline text-blue-900 hover:uppercase" href="https://therobotlives.com/">Blog.</a></p>
     </div>
 
-    <.debug_details grid={@grid_identifier} grid_callback={{__MODULE__, :grid, []}}/>
+    <.debug_details grid={assigns[:grid] || nil} grid_callback={{__MODULE__, :grid, []}}/>
 
 
     <div class="flex flex-row w-full h-full">

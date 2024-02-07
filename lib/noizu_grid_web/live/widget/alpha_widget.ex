@@ -3,7 +3,7 @@ defmodule NoizuGridWeb.Widget.AlphaWidget do
 
   def render(assigns) do
     ~H"""
-        <div> Alpha WIDGET - <%= DateTime.to_unix(@mounted) %> </div>
+        <div class="border p-1 shadow-sm opacity-90 z-40 bg-blue-300"> Alpha WIDGET - <%= DateTime.to_unix(@mounted) %> </div>
     """
   end
 

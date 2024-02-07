@@ -4,27 +4,43 @@
 
 /* This file is for your main application CSS */
 
+.noizu-grid.dragging .live-cell {
+    @apply pointer-events-none;
+}
+
+.noizu-grid.dragging .grid-cell {
+    @apply z-30;
+}
+
+
+.noizu-grid .grid-cell.col-start-7.row-start-7 {
+    @apply z-30 bg-red-100;
+}
+
+
 /* Grid Cells */
 .grid-cell.empty {
-    @apply bg-black opacity-5 text-white;
+    @apply  opacity-90 border relative;
+    user-select: none;
 }
 
 .grid-cell.empty.drop-selection {
-    @apply bg-green-800 opacity-50;
+    @apply bg-white/30 shadow-slate-500 shadow-inner  opacity-50 ;
 }
 .grid-cell.empty.drop-selection.drop-obstructed {
-    @apply bg-red-800;
+    @apply border-2 border-dashed border-red-500;
 }
 
 .noizu-grid .noizu-grid-grid {
-    @apply grid gap-1 grid-flow-col;
+    @apply grid gap-0;
     align-content: stretch;
     justify-content: stretch;
 }
 
 .live-cell {
-    @apply bg-slate-400 m-0 p-0 ring ;
+    @apply m-2 p-2 opacity-90 relative border z-20 bg-red-100;
 }
+
 
 .live-cell:has(> .action-bar:hover) {
     @apply ring;

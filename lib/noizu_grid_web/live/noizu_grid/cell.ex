@@ -47,7 +47,26 @@ defmodule NoizuGrid.Cell do
      id={"#{@id}-cell"}
      class={["live-cell", layout(@cell.layout)]}
     >
-      [WIP-<%= @index %>] (<%= @cell.layout.col %>,<%= @cell.layout.row %>) - (<%= @cell.layout.width %>,<%= @cell.layout.height %>)
+
+    <%= case @cell.component.__live__().kind do %>
+      <% :view -> %>
+       <%=
+          live_render(
+              @socket,
+              @cell.component,
+              id: "#{@cell.identifier}",
+              container: {:div, [class: "w-full h-full z-40"]},
+              session: @cell.settings,
+              layout: false
+           )
+          %>
+      <% :component -> %>
+         <.live_component
+                id={"#{@cell.identifier}"}
+                module={@cell.component}
+                session={@cell.settings}
+            />
+    <% end %>
     </div>
     """
   end
